@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
         if (i > 0)
             p[i] = rnd.wnext(i, t);
 
-    printf("%d\n", n);
+    printf("%d %d\n", n, m);
     vector<int> perm(n);
     forn(i, n)
         perm[i] = i;
