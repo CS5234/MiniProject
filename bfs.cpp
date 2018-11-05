@@ -2,6 +2,8 @@
 #include <vector>
 #include <iostream>
 #include <queue> 
+#include <algorithm>
+
 
 
 using namespace std;
@@ -44,16 +46,46 @@ void bfs(int i, vector<vector<int>> &adjLst, int** distance, int n) {
 	}
 }
 
-void removeDuplicates(vector<int> &from, vector<int> &base) {
+void minus_difference(vector<int> &from, vector<int> &base) {
+	int i = 0, j = 0;
 
+	while (i < from.size() && j < base.size()) {
+		if (from.at(i) == -1)
+			continue;
+		if (from.at(i) < base.at(j)) {
+			i++;
+		} else if (from.at(i) > base.at(j)) {
+			j++;
+		} else {
+			from.at(i) = -1;
+		}
+	}
 }
 
-void bfs_cache_efficient(int i, vector<vector<int>> &adjLst, int** distance, int n) {
-	vector<int> prev;
-	prev.push_back(i);
+void removeDuplicates(vector<int> &vec) {
+	int cur = vec.at(0);
+	for (int i = 1; i < vec.size(); i++) {
+		if (vec.at(i) == cur) {
+			vec.at(i) = -1;
+		} else {
+			cur = vec.at(i);
+		}
+	}
+}
 
-	vector<int> cur = adjLst.at(i);
+void bfs_cache_efficient(int origin, vector<vector<int>> &adjLst, int** distance, int n) {
+	vector<int> prev;
+	prev.push_back(origin);
+
+	vector<int> cur = adjLst.at(origin);
 	sort(cur.begin(), cur.end());
+
+	distance[origin][origin] = 0;
+	for (int k = 0; k < cur.size(); k++) {
+		distance[origin][cur.at(k)] = 1;
+	}
+
+	int depth = 2;
 
 	while (cur.size() > 0) {
 		vector<int> vec;
@@ -63,15 +95,23 @@ void bfs_cache_efficient(int i, vector<vector<int>> &adjLst, int** distance, int
 				vec.push_back(adjLst.at(cur.at(i)).at(j));
 			}
 		}
-
 		sort(vec.begin(), vec.end());
-		vec.erase(unique(vec.begin(), vec.end()), vec.end());
+		removeDuplicates(vec);
 
-		removeDuplicates(vec, prev);
-		removeDuplicates(vec, cur);
+		minus_difference(vec, prev);
+		minus_difference(vec, cur);
 
+		vector<int> next;
+		for (int i = 0; i < next.size(); i++) {
+			if (vec.at(i) != -1) {
+				next.push_back(vec.at(i));
+			}
+		}
+		for (int i = 0; i < next.size(); i++)
+			distance[origin][next.at(i)] = depth;
+		depth++;
 		prev = cur;
-		cur = vec;
+		cur = next;
 	}
 }
 
