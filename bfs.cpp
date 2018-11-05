@@ -44,6 +44,37 @@ void bfs(int i, vector<vector<int>> &adjLst, int** distance, int n) {
 	}
 }
 
+void removeDuplicates(vector<int> &from, vector<int> &base) {
+
+}
+
+void bfs_cache_efficient(int i, vector<vector<int>> &adjLst, int** distance, int n) {
+	vector<int> prev;
+	prev.push_back(i);
+
+	vector<int> cur = adjLst.at(i);
+	sort(cur.begin(), cur.end());
+
+	while (cur.size() > 0) {
+		vector<int> vec;
+
+		for (int i = 0; i < cur.size(); i++) {
+			for (int j = 0; j < adjLst.at(cur.at(i)).size(); j++) {
+				vec.push_back(adjLst.at(cur.at(i)).at(j));
+			}
+		}
+
+		sort(vec.begin(), vec.end());
+		vec.erase(unique(vec.begin(), vec.end()), vec.end());
+
+		removeDuplicates(vec, prev);
+		removeDuplicates(vec, cur);
+
+		prev = cur;
+		cur = vec;
+	}
+}
+
 
 int main() {
 	int n, m;
@@ -67,7 +98,7 @@ int main() {
 	clock_t start = clock();
 	for (int i = 0; i < n; i++)
 		bfs(i, adjLst, distance, n);
-	
+
 	double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 
 	cout << "duration: " << duration << "\n";
