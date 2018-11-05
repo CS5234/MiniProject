@@ -6,16 +6,6 @@ const int MAXN = 405;
 int n, m;
 int deg[MAXN], adjMat[MAXN][MAXN];
 
-void multiply(const int A[MAXN][MAXN], const int B[MAXN][MAXN], int Z[MAXN][MAXN]) {
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			for (int k = 0; k < n; k++) {
-				Z[i][j] += A[i][k] + B[k][j];
-			}
-		}
-	}
-}
-
 void Seidel(int A[MAXN][MAXN], int res[MAXN][MAXN]) {
 	// multiply
 	for (int i = 0; i < n; i++) {
@@ -59,7 +49,14 @@ void Seidel(int A[MAXN][MAXN], int res[MAXN][MAXN]) {
 	Seidel(res, T);
 
 	memset(res, 0, sizeof(res));
-	multiply(T, A, res);
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			for (int k = 0; k < n; k++) {
+				res[i][j] += T[i][k] + A[j][k];
+			}
+		}
+	}
 
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
@@ -90,11 +87,11 @@ int main() {
 
 	double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			printf("%d ", res[i][j]);
-		} printf("\n");
-	}
+	// for (int i = 0; i < n; i++) {
+	// 	for (int j = 0; j < n; j++) {
+	// 		printf("%d ", res[i][j]);
+	// 	} printf("\n");
+	// }
 
 	printf("duration: %f\n", duration);
 
