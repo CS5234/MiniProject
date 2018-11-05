@@ -34,13 +34,13 @@ int main() {
 	
 	double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 
-	printf("duration: %f\n", duration);
-
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			printf("%d ", res[i][j]);
 		} printf("\n");
 	}
+
+	printf("duration: %f\n", duration);
 
 	return 0;
 }
