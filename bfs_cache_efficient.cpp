@@ -4,20 +4,9 @@
 #include <queue> 
 #include <algorithm>
 
+
+
 using namespace std;
-
-void printVec(vector<int> &vec) {
-	if (vec.size() == 0) {
-		cout << "vec empty\n";
-		return;
-	}
-
-	cout << "vec: ";
-	for (int i = 0; i < vec.size(); i++) {
-		cout << vec.at(i) << " ";
-	}
-	cout << "\n";
-}
 
 void insertV(vector<int> &v, int a) {
 	v.push_back(a);
@@ -35,7 +24,6 @@ void constructAdjLst(vector<vector<int>> &adjLst, int m) {
 
 void bfs(int i, vector<vector<int>> &adjLst, int** distance, int n) {
 	int visited[n] = {0};
-	visited[i] = 1;
 	queue<int> q;
 	q.push(i);
 	int d = 0;
@@ -44,12 +32,12 @@ void bfs(int i, vector<vector<int>> &adjLst, int** distance, int n) {
 		queue<int> nq;
 		while (!q.empty()) {
 			int next = q.front();
+			visited[next] = 1;
 			distance[i][next] = d;	
 			q.pop();
 			for (int k = 0; k < adjLst.at(next).size(); k++) {
 				if (!visited[adjLst.at(next).at(k)]) {
 					nq.push(adjLst.at(next).at(k));
-					visited[adjLst.at(next).at(k)] = 1;
 				}
 			}
 		}
@@ -89,6 +77,18 @@ void removeDuplicates(vector<int> &vec) {
 	}
 }
 
+void printVec(vector<int> &vec) {
+	if (vec.size() == 0) {
+		cout << "vec empty\n";
+		return;
+	}
+
+	cout << "vec: ";
+	for (int i = 0; i < vec.size(); i++) {
+		cout << vec.at(i) << " ";
+	}
+	cout << "\n";
+}
 
 void bfs_cache_efficient(int origin, vector<vector<int>> &adjLst, int** distance, int n) {
 	vector<int> prev;
@@ -157,8 +157,7 @@ int main() {
 
 	clock_t start = clock();
 	for (int i = 0; i < n; i++) {
-		bfs(i, adjLst, distance, n);
-		// bfs_cache_efficient(i, adjLst, distance, n);
+		bfs_cache_efficient(i, adjLst, distance, n);
 	}
 
 	double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
