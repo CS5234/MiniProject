@@ -1,132 +1,106 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MAXN = 1005;
-
 int n, m;
-int adjMat[MAXN][MAXN];
 
-void multiply(const int A[MAXN][MAXN], const int B[MAXN][MAXN], int Z[MAXN][MAXN]) {
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			for (int k = 0; k < n; k++) {
-				Z[i][j] += A[i][k] * B[j][k];
-			}
-		}
-	}
+vector<int> degree;
+vector<vector<int>> adjMat;
+
+vector<vector<int>> X;
+
+inline void multiply(const vector<vector<int>>& A, const vector<vector<int>>& B, vector<vector<int>>& Z) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            Z[i][j] = 0;
+            for (int k = 0; k < n; k++) {
+                Z[i][j] += A[i][k] * B[j][k];
+            }
+        }
+    }
 }
 
-void print(const int A[MAXN][MAXN]) {
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			printf("%d ", A[i][j]);
-		} printf("\n");
-	}
-}
+void Seidel(vector<vector<int>>& A) {
+    bool done = true;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i == j) {
+                continue;
+            }
 
-void Seidel(int A[MAXN][MAXN]) {
-	//printf("A\n");
-	//print(A);
+            if (A[i][j] == 0) {
+                done = false;
+                i = j = n;  // break
+            }
+        }
+    }
 
-	bool done = true;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (i == j) {
-				continue;
-			}
+    if (done) {
+        return;
+    }
 
-			if (A[i][j] == 0) {
-				done = false;
-				break;
-			}
-		}
-		if (!done) {
-			break;
-		}
-	}
+    vector<vector<int>> B(n, vector<int>(n, 0));
+    multiply(A, A, B);
 
-	if (done) {
-		return;
-	}
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i != j && (A[i][j] == 1 || B[i][j] > 0)) {
+                B[i][j] = 1;
+            } else {
+                B[i][j] = 0;
+            }
+        }
+    }
 
-	int B[MAXN][MAXN]; memset(B, 0, sizeof(B));
-	multiply(A, A, B);
+    Seidel(B);
 
-	// printf("Z:\n");
-	// print(Z);
+    multiply(B, A, X);
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (i != j && (A[i][j] == 1 || B[i][j] > 0)) {
-				B[i][j] = 1;
-			} else {
-				B[i][j] = 0;
-			}
-		}
-	}
+    for (int i = 0; i < n; i++) {
+        degree[i] = 0;
+        for (int j = 0; j < n; j++) {
+            degree[i] += A[i][j];
+        }
+    }
 
-	// printf("B:\n");
-	// print(B);
-
-	// int T[MAXN][MAXN]; memset(T, 0, sizeof(T));
-	Seidel(B);
-
-	// printf("T:\n");
-	// print(T);
-
-	int X[MAXN][MAXN]; memset(X, 0, sizeof(X));
-	multiply(B, A, X);
-
-	// printf("X:\n");
-	// print(X);
-
-	int degree[MAXN];
-	//printf("degree:\n");
-	for (int i = 0; i < n; i++) {
-		degree[i] = 0;
-		for (int j = 0; j < n; j++) {
-			degree[i] += A[i][j];
-		}
-	//	printf("%d ", degree[i]);
-	} //printf("\n");
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			if (X[i][j] >= B[i][j] * degree[j]) {
-				A[i][j] = 2 * B[i][j];
-			} else {
-				A[i][j] = 2 * B[i][j] - 1;
-			}
-		}
-	}
-
-	// printf("RES:\n");
-	// print(res);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (X[i][j] >= B[i][j] * degree[j]) {
+                A[i][j] = 2 * B[i][j];
+            } else {
+                A[i][j] = 2 * B[i][j] - 1;
+            }
+        }
+    }
 }
 
 int main() {
 
-	cin >> n >> m;
-	while (m--) {
-		int u, v;
-		cin >> u >> v;
+    cin >> n >> m;
+    
+    adjMat.assign(n, vector<int>(n, 0));
+    while (m--) {
+        int u, v;
+        cin >> u >> v;
 
-		adjMat[u][v] = adjMat[v][u] = 1;
-	}
+        adjMat[u][v] = adjMat[v][u] = 1;
+    }
 
-	clock_t start = clock();
-	printf("Going to Seidel\n");
-	Seidel(adjMat);
+    clock_t start = clock();
 
-	double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
+    X.assign(n, vector<int>(n, 0));
+    degree.assign(n, 0);
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			printf("%d ", adjMat[i][j]);
-		} printf("\n");
-	}
+    Seidel(adjMat);
 
-	printf("duration: %f\n", duration);
+    double duration = (clock() - start) / (double) CLOCKS_PER_SEC;
 
-	return 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d ", adjMat[i][j]);
+        } printf("\n");
+    }
+
+    printf("duration: %f\n", duration);
+
+    return 0;
 }
