@@ -56,7 +56,7 @@ int main() {
 	debug(n, res);
 #endif
 
-	printf("duration: %f\n", duration);
+	printf("%f\n", duration);
 
 	return 0;
 }

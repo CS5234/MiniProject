@@ -74,7 +74,7 @@ int main() {
 	debug(n, adjMat);
 #endif
 
-    printf("duration: %f\n", duration);
+    printf("%f\n", duration);
 
     return 0;
 }
