@@ -17,7 +17,7 @@ for data in $DATA_DIR/*; do
 	$EXEC_DIR/truth            < $data
 	printf "seidel-armadillo.cpp: "
 	$EXEC_DIR/seidel-armadillo < $data
-	echo
+	printf "\n"
 done
 
 diff $OUTP_DIR/truth.out $OUTP_DIR/seidel-armadillo.out
